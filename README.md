@@ -1,3 +1,71 @@
+# Maman14 Project
+
+This repository contains the implementation of a server-client system. The server is written in C++ and the client in Python. Below is an overview of the project structure and its components.
+
+---
+
+## Components
+
+### **Server (C++)**
+- **Source files**: Implements the core server functionality:
+  - `main.cpp`: Entry point of the server.
+  - `server.cpp`: Contains the main server logic.
+  - `request_handler.cpp`: Handles various client requests like save, retrieve, and delete.
+  - `communication.cpp`: Manages networking and TCP communication.
+  - `file_manager.cpp`: Handles file I/O operations for persistent storage.
+  - `protocol.cpp`: Implements the binary protocol used for communication.
+
+- **Headers**: Contains declarations corresponding to the source files.
+
+- **Tests**: Optional test cases located in `/server/tests`.
+
+- **Build Configuration**: The `CMakeLists.txt` file provides configuration for building the server.
+
+### **Client (Python)**
+- **Source files**: Implements the client-side logic:
+  - `client.py`: Entry point for the client application.
+  - `client_helpers.py`: Contains helper functions for communication with the server.
+
+- **Tests**: Optional test cases located in `/client/tests`.
+
+- **Assets**: Contains any optional assets needed for testing or configuration.
+
+### **Documentation**
+- All project documentation is in the `/docs` directory.
+- Includes files like `project_overview.md` for detailed explanations of the project structure, communication protocol, etc.
+
+### **Scripts**
+- The `/scripts` directory contains utility scripts:
+  - `build.sh`: Builds the server using the configuration in `/server/build`.
+  - `run_tests.sh`: Runs all tests for both the server and client.
+
+---
+
+## How to Build and Run
+
+### **Server**
+1. Navigate to the server's build directory:
+   ```bash
+   cd server/build
+   ```
+2. Use CMake to build the server:
+    ```bash
+    makefile
+    ```
+3. Run the server
+    ```bash
+    ./server
+    ```
+
+4. Run the client
+    ```bash
+    python client.py
+    ```
+---
+
+## Project Structure
+
+```plaintext
 /maman14
 │
 ├── /server                     # C++ server-side code
@@ -38,3 +106,4 @@
 │   └── run_tests.sh            # Run tests script (if needed for both C++ and Python)
 │
 └── README.md                   # Project description and instructions
+```
