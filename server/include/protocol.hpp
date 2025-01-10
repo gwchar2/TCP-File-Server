@@ -2,13 +2,15 @@
 #define PROTOCOL_HPP
 
 #include <cstdint>
+#include <iostream>
+#include <vector>
 
 // OpCode definitions
 enum class OpCode : uint8_t {
-    BackupFile = 100,           // all header fields are full
-    RetrieveFile = 200,         // size,payload fields do not exist.
-    DeleteFile = 201,           // size,payload files do not exist.
-    ListFiles = 202             // size,payload,filename,namelen do not exist.
+    BackupFileOp = 100,           // all header fields are full
+    RetrieveFileOp = 200,         // size,payload fields do not exist.
+    DeleteFileOp = 201,           // size,payload files do not exist.
+    ListFilesOp = 202             // size,payload,filename,namelen do not exist.
 };
 
 // Response status definitions
@@ -27,8 +29,8 @@ struct RequestHeader {
     uint8_t version;
     OpCode op;
     uint16_t name_len;
-    //filename will come dynamically after the length, since it is not a fixed size. best practice is keeping it outside the struct.
     uint32_t file_size;
+    //filename will come dynamically after the length, since it is not a fixed size. best practice is keeping it outside the struct.
     //payload comes after this, dynamically.
 };
 

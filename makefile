@@ -11,9 +11,9 @@ BUILD_DIR = server/build
 
 # Server source files
 SERVER_SRC = $(SRC_DIR)/main.cpp \
-             $(SRC_DIR)/server.cpp
+             $(SRC_DIR)/server.cpp \
+			 $(SRC_DIR)/request.cpp \
              # add the files when I need them: \
-			 $(SRC_DIR)/request_handler.cpp \
              $(SRC_DIR)/communication.cpp \
              $(SRC_DIR)/file_manager.cpp \
              $(SRC_DIR)/protocol.cpp

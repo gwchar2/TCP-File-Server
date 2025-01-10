@@ -2,16 +2,16 @@
 #define SERVER_HPP
 
 #include <boost/asio.hpp>
+#include <fstream>
+#include <iostream>
 #include <thread>  // For creating new threads
 
 using boost::asio::ip::tcp;
 
 class Server {
 public:
-    // Constructor
-    Server(int port);
 
-    // Start the server
+    Server(int port);
     void start();
 
 private:

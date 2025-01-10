@@ -72,13 +72,13 @@ This repository contains the implementation of a server-client system. The serve
 │   ├── /src                    # C++ source files
 │   │   ├── main.cpp            # Main entry point of the server
 │   │   ├── server.cpp          # Server logic
-│   │   ├── request_handler.cpp # Handles requests (e.g., save, retrieve, delete)
+│   │   ├── request.cpp         # Handles requests (e.g., save, retrieve, delete)
 │   │   ├── communication.cpp   # Handles networking (e.g., TCP communication)
 │   │   ├── file_manager.cpp    # File handling (e.g., file read/write)
 │   │   └── protocol.cpp        # Protocol logic (e.g., binary protocol parsing)
 │   ├── /include                # C++ header files
 │   │   ├── server.h            # Declarations for server
-│   │   ├── request_handler.h   # Declarations for request handling
+│   │   ├── request.h           # Declarations for request handling
 │   │   ├── communication.h     # Declarations for communication
 │   │   ├── file_manager.h      # Declarations for file management
 │   │   └── protocol.h          # Declarations for protocol logic
