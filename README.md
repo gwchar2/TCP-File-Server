@@ -74,13 +74,13 @@ This repository contains the implementation of a server-client system. The serve
 │   │   ├── server.cpp          # Server logic
 │   │   ├── request.cpp         # Handles requests (e.g., save, retrieve, delete)
 │   │   ├── communication.cpp   # Handles networking (e.g., TCP communication)
-│   │   ├── file_manager.cpp    # File handling (e.g., file read/write)
+│   │   ├── logger.cpp          # Log handling (e.g., prints to terminal)
 │   │   └── protocol.cpp        # Protocol logic (e.g., binary protocol parsing)
 │   ├── /include                # C++ header files
 │   │   ├── server.h            # Declarations for server
 │   │   ├── request.h           # Declarations for request handling
 │   │   ├── communication.h     # Declarations for communication
-│   │   ├── file_manager.h      # Declarations for file management
+│   │   ├── logger.h            # Declarations for logger
 │   │   └── protocol.h          # Declarations for protocol logic
 │   ├── /build                  # Build directory (output of compilation)
 │   │   └── CMakeLists.txt      # CMake configuration for building the server
