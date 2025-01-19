@@ -42,6 +42,7 @@ This repository contains the implementation of a server-client system. The serve
 ---
 
 ## How to Build and Run
+Note: This must be done with 2 seperate terminals, one for the client, and one for the server.
 
 ### **Server**
 1. Navigate to the main directory
