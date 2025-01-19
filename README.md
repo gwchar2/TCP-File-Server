@@ -19,7 +19,7 @@ This repository contains the implementation of a server-client system. The serve
 
 - **Tests**: Optional test cases located in `/server/tests`.
 
-- **Build Configuration**: The `CMakeLists.txt` file provides configuration for building the server.
+- **Build Configuration**: The `makefile.txt` file provides configuration for building the server.
 
 ### **Client (Python)**
 - **Source files**: Implements the client-side logic:
@@ -44,10 +44,8 @@ This repository contains the implementation of a server-client system. The serve
 ## How to Build and Run
 
 ### **Server**
-1. Navigate to the server's build directory:
-   ```bash
-   cd server/build
-   ```
+1. Navigate to the main directory
+
 2. Use CMake to build the server:
     ```bash
     makefile
@@ -56,8 +54,11 @@ This repository contains the implementation of a server-client system. The serve
     ```bash
     ./server
     ```
-
-4. Run the client
+4. Navigate to the client directory
+   ```bash
+   cd client/src
+   ```
+5. Run the client
     ```bash
     python client.py
     ```
