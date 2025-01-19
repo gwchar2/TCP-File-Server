@@ -43,9 +43,8 @@ struct ResponseHeader {
     uint8_t version;
     ResponseStatus status;
     uint16_t name_len;
-    //filename will come dynamically after the length, since it is not a fixed size. best practice is keeping it outside the struct.
     uint32_t file_size;
-    //payload comes after this, dynamically.
+    //filename will come dynamically after the length, since it is not a fixed size. best practice is keeping it outside the struct.
+    //payload comes after this, dynamically.};
 };
-
 #endif 

@@ -48,12 +48,21 @@ void Request::processBackupFile() {
     try {
         
         /* Read the name of the file */
-        bytes_read = sock.read_some(boost::asio::buffer(buffer.data(), header.name_len));  // Read the filename
-        std::string file_name(reinterpret_cast<char*>(buffer.data()), static_cast<size_t>(header.name_len));  // Convert buffer to string
+        bytes_read = sock.read_some(boost::asio::buffer(buffer.data(), header.name_len));  
+        std::string file_name(reinterpret_cast<char*>(buffer.data()), static_cast<size_t>(header.name_len));  
         
         /* Log file name */
         log_file_name(file_name);
-
+        
+        /* As long as bytes sent < amount of file names, keep sending. we send MAX_BUFFER each time (2048 bytes) */
+        size_t bytesReceived = 0;
+        while (bytesReceived < header.file_size) {
+            size_t chunkSize = std::min(static_cast<size_t>(MAX_BUFFER), header.file_size - bytesReceived);
+            chunkSize = sock.read_some(boost::asio::buffer(buffer.data(), chunkSize));
+            std::string data(reinterpret_cast<char*>(buffer.data()), static_cast<size_t>(chunkSize)); 
+            bytesReceived += chunkSize;
+            log_data_received(bytesReceived,header.file_size, data);
+        }      
        
 
     } catch (const std::exception& e) {
@@ -76,19 +85,10 @@ void Request::processListFiles() {
     /* Define the directory path */
     std::filesystem::path dir = std::filesystem::absolute(DIRECTORY) / std::to_string(header.user_id);
     std::cout << "Searching for files in: " << dir << std::endl;
-
+    
     /* We now check if the directory exists */
-    if (!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir) || std::filesystem::is_empty(dir)){
-        std::cout << "Error no such directory exists!" << std::endl;
-
-        /* Create a response with the correct status, and send it back! */
-        Response response(sock, response.getHeader().version, ResponseStatus::EMPTY_DIRECTORY, 0, 0);
-        response.packHeader();
-        boost::asio::write(sock, boost::asio::buffer(response.getBuffer()));
-        log_response_header(response.getHeader());
-        const char* responsee = "No such directory!";
-        boost::asio::write(sock, boost::asio::buffer(responsee, strlen(responsee)));
-        
+    if (!check_directory(dir)){
+        responseEmptyDirectory(sock);
     }
 
     /* If it does exist, we make a list of all the files */
@@ -105,20 +105,13 @@ void Request::processListFiles() {
         fileNames += name + "\n";
     }
     
-    /* Create the correct response header, and send it back! While checking if filenames > 2048 */
-    Response response(sock,header.version, ResponseStatus::LIST_RETURNED, header.name_len, fileNames.size());
-    response.packHeader();
-    boost::asio::write(sock, boost::asio::buffer(response.getBuffer()));
-    log_response_header(response.getHeader());
+    /* Create the correct response header, and send it back */
+    responseListReturned(sock,fileNames);
+}
 
-    size_t bytesSent = 0;
-    while (bytesSent < fileNames.size()) {
-        size_t chunkSize = std::min(static_cast<size_t>(MAX_BUFFER), fileNames.size() - bytesSent);
-        std::string chunk = fileNames.substr(bytesSent, chunkSize);
-        
-        boost::asio::write(sock, boost::asio::buffer(chunk));
-        bytesSent += chunkSize;
-        log_response_sent(chunk);
-    }  
- 
+bool Request::check_directory(std::filesystem::path dir){
+    if (!std::filesystem::exists(dir) || !std::filesystem::is_directory(dir) || std::filesystem::is_empty(dir)){
+            return false;
+    }
+    return true;
 }

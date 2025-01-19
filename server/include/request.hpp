@@ -28,7 +28,7 @@ public:
     void processRetrieveFile(); // Process RetrieveFile OP
     void processDeleteFile(); // Process DeleteFile OP
     void processListFiles();  // Process ListFiles OP
-
+    bool check_directory(std::filesystem::path dir);
 };
 
 #endif 

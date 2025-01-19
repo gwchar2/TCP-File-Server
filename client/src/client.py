@@ -2,7 +2,9 @@ import socket
 import os
 import request_handler
 import struct
+import random
 from request_handler import RequestHeader
+from response import Response
 
 
 # Read the server address and port from server.info
@@ -21,60 +23,26 @@ def get_backup_files(filename="backup.info"):
         print(f"{backup_file}")
     print("\n")
     return files
-
-def receive_all(sock, size):
-    # Helper function to receive exactly 'size' bytes
-    data = bytearray()
-    while len(data) < size:
-        packet = sock.recv(size - len(data))
-        if not packet:
-            raise ConnectionError("Connection closed")
-        data.extend(packet)
-    return data
-
+ 
 # Main function to execute the client logic
 def main():
 
     # Get server info from server.info
     HOST, PORT = get_server_info()
     print(f"Connecting to {HOST} : {PORT}\n")
-
-    # Get the list of files to back up from backup.info
-    backup_files = get_backup_files()
+    user_id = random.randint(0, 0xFFFFFFFF) 
 
     # Connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
+        user_id = 126
 
-        # Send request
-        request = request_handler.firstRequest()
-        s.sendall(request)
+        # Send request for file list
+        request_handler.request_file_list(user_id,s)
 
-        # First receive and parse the header
-        header_size = struct.calcsize('I B B I')  # Adjust based on your header structure
-        header_data = receive_all(s, header_size)
-        total_size, version, status, data_size = struct.unpack('I B B I', header_data)
-
-        print(f"Expecting {data_size} bytes of data")
-
-        # Now receive all the data
-        received_data = bytearray()
-        while len(received_data) < data_size:
-            remaining = data_size - len(received_data)
-            chunk_size = min(2048, remaining)
-            
-            chunk = receive_all(s, chunk_size)
-            received_data.extend(chunk)
-            
-            print(f"Received {len(received_data)} of {data_size} bytes")
-
-        # Try to decode the complete data
-        try:
-            decoded_data = received_data.decode('utf-8')
-            print("Files found:")
-            print(decoded_data)
-        except UnicodeDecodeError:
-            print(f"Raw data (hex): {received_data.hex()}")
+        # Send request to save backup_files[0]
+        #backup_files = get_backup_files()
+        #request_handler.request_backup_file(user_id,s,backup_files[0])
 
 # Execute the main function
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ void formatted_hexa(const unsigned char* data, size_t length);
 void log_header(const std::string& msg);
 void log_received_header(const RequestHeader& header);
 void log_file_name(const std::string& file_name);
-void log_processing_request(const std::string& request_type);
+void log_data_received(size_t bytesReceived, size_t file_size,const std::string& data);
 void log_response_header(const ResponseHeader& header);
 void log_response_sent(const std::string& response);
 

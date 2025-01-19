@@ -40,8 +40,7 @@ void log_header(const std::string& msg) {
 }
 
 void log_received_header(const RequestHeader& header) {
-    log_header("Header received");
-
+    log_header("Header received from client");
     std::cout << "User ID: " << std::dec << header.user_id << std::endl;
     std::cout << "Version: " << std::dec << (int)header.version << std::endl;
     std::cout << "Op Code: " << (int)header.op << std::endl;
@@ -51,19 +50,18 @@ void log_received_header(const RequestHeader& header) {
 }
 
 void log_file_name(const std::string& file_name) {
-    log_header("File Name received");
+    log_header("File Name received from client");
     std::cout << "File Name: " << file_name << std::endl;
     formatted_hexa(reinterpret_cast<const unsigned char*>(file_name.data()), sizeof(file_name));
 }
 
-void log_processing_request(const std::string& request_type) {
-    log_header("Processing request");
-    std::cout << "Request Type: " << request_type << std::endl;
+void log_data_received(size_t bytesReceived, size_t file_size, const std::string& data){
+    std::cout << "Received " <<std::dec << bytesReceived << "/" << std::dec << file_size << " Bytes" << std::endl;
+    formatted_hexa(reinterpret_cast<const unsigned char*>(&data), sizeof(data));
 }
 
 void log_response_header(const ResponseHeader& header) {
-    log_header("Header sent");
-
+    log_header("Header sent to client");
     std::cout << "Version: " << std::dec << (int)header.version << std::endl;
     std::cout << "Status Code: " << std::dec << (int)header.status << std::endl;
     std::cout << "Filename Length: " << header.name_len << " bytes" << std::endl;
