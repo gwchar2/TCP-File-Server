@@ -3,15 +3,15 @@
 
 
 void formatted_hexa(const unsigned char* data, size_t length) {
-    // Loop through the data in chunks of 16 bytes
+
     for (size_t i = 0; i < length; i += BYTES_PER_LINE) {
         // Print hex values
         for (size_t j = 0; j < BYTES_PER_LINE; j++) {
             if (i + j < length) {
                 std::cout << std::hex << std::setw(2) << std::setfill('0')
-                    << static_cast<int>(data[i + j]) << " ";
+                          << static_cast<int>(data[i + j]) << " ";
             } else {
-                std::cout << "  ";  // Padding for incomplete rows
+                std::cout << "   ";  // Pad with spaces for incomplete rows
             }
         }
 
@@ -22,11 +22,11 @@ void formatted_hexa(const unsigned char* data, size_t length) {
                 unsigned char byte = data[i + j];
                 std::cout << (std::isprint(byte) ? static_cast<char>(byte) : '.');
             } else {
-                std::cout << " ";  // Padding for incomplete rows
+                std::cout << " ";  // Pad with spaces for incomplete rows
             }
         }
 
-        std::cout << std::endl; // Finish a line
+        std::cout << std::endl;  // Finish a line
     }
 }
 
@@ -52,12 +52,14 @@ void log_received_header(const RequestHeader& header) {
 void log_file_name(const std::string& file_name) {
     log_header("File Name received from client");
     std::cout << "File Name: " << file_name << std::endl;
-    formatted_hexa(reinterpret_cast<const unsigned char*>(file_name.data()), sizeof(file_name));
+    formatted_hexa(reinterpret_cast<const unsigned char*>(file_name.data()), file_name.size());
 }
 
 void log_data_received(size_t bytesReceived, size_t file_size, const std::string& data){
-    std::cout << "Received " <<std::dec << bytesReceived << "/" << std::dec << file_size << " Bytes" << std::endl;
-    formatted_hexa(reinterpret_cast<const unsigned char*>(&data), sizeof(data));
+    std::string header = "Received " + std::to_string(bytesReceived) + "/" + (std::to_string)(file_size) + " Bytes";
+    log_header(header);
+    //std::cout << "Received " <<std::dec << bytesReceived << "/" << std::dec << file_size << " Bytes" << std::endl;
+    formatted_hexa(reinterpret_cast<const unsigned char*>(data.data()), data.size());
 }
 
 void log_response_header(const ResponseHeader& header) {
@@ -71,6 +73,6 @@ void log_response_header(const ResponseHeader& header) {
 
 void log_response_sent(const std::string& response) {
     log_header("Response sent to client");
-    std::cout << response << std::endl;
+    std::cout << response;
     formatted_hexa(reinterpret_cast<const unsigned char*>(response.data()), response.size());
 }

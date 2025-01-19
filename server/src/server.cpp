@@ -5,8 +5,9 @@ Server::Server(int port): io_context(),acceptor(io_context, tcp::endpoint(tcp::v
 void Server::start() {
     log_header("Server started, waiting for client connections...");
     while (true) {
-        tcp::socket sock(io_context);
         try {
+            tcp::socket sock(io_context);
+
             /* Accept a client connection */
             acceptor.accept(sock);
             log_header("Client connected");
@@ -21,19 +22,25 @@ void Server::start() {
 }
 
 void Server::handle_client(tcp::socket sock) {
-    try {
-        
-        /* Create a new request & Response*/
-        Request request(sock);
-        //Response responsee;
+    while (sock.is_open()){
+        try {
+            /* Create a new request & Response*/
+            Request request(sock);
+            //Response responsee;
 
-        /* Read the header */
-        request.readHeader();
+            /* Read the header */
+            request.readHeader();
 
-        /* Process the request */
-        request.processRequest();
+            /* Process the request */
+            request.processRequest();
 
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        } catch (const boost::system::system_error& e) {
+            if (e.code() == boost::asio::error::eof) 
+                std::cerr << "\nClient closed connection.\n" << std::endl;
+            sock.close();
+            break;  
+        } catch (const std::exception& e) {
+            std::cerr << e.what() << std::endl; 
+        }
     }
 }

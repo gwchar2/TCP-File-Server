@@ -1,16 +1,19 @@
 import struct
 import os 
+import select
 import logger
 from enum import Enum
 from response import Response
+from response import Status
+
+CURR_REQ = 1
+MAX_BLOCK_SIZE = 2048
 
 class OpCode(Enum):
     BACKUPFILEOP = 100
     RETRIEVEFILEOP = 200
     DELETEFILEOP = 201
     LISTFILESOP = 202
-
-MAX_BLOCK_SIZE = 2048
 
 class RequestHeader:
     def __init__(self, op: OpCode, user_id):
@@ -80,29 +83,40 @@ class RequestHeader:
 
 #Request for file backup on server OpCode.BACKUPFILEOP (100)
 def request_backup_file(user_id, socket, file):
-    # Implement the header data
-    header = RequestHeader(OpCode.BACKUPFILEOP, user_id)
+    global CURR_REQ
+    if not os.path.exists(file):
+        print(f"Error: The file {file} does not exist.")
+        return
+    else:
+        # Implement the header data
+        header = RequestHeader(OpCode.BACKUPFILEOP, user_id)
 
-    if file is not None:
-        header.setName(file)
-    request_header = header.pack_header()
+        if file is not None:
+            header.setName(file)
+        request_header = header.pack_header()
 
-    # Log the request 
-    formatted_request = logger.format_hex(request_header, group_size=1)
-    print(f"Sending second request:\n{formatted_request}")
-    message = header.build_message()
-    print(f"User ID: {header.getUserID()}")
-    print(f"Op Code: {header.getOpCode()}")
-    print(f"File Name: {header.getFileName()}")
-    print(f"File Size: {header.getFileSize()}\n")
+        # Log the request 
+        formatted_request = logger.format_hex(request_header, group_size=1)
+        print(f"Sending request #{CURR_REQ}:\n{formatted_request}")
+        message = header.build_message()
+        print(f"User ID: {header.getUserID()}")
+        print(f"Op Code: {header.getOpCode()}")
+        print(f"File Name: {header.getFileName().decode('utf-8')}")
+        print(f"File Size: {header.getFileSize()}\n")
 
-    socket.sendall(message)
-    # Return the message to be sent
-    send_file(socket,header.getFileName())
-    response = Response(socket)
+        socket.sendall(message)
+
+        # Return the message to be sent
+        send_file(socket,header.getFileName())
+        response = Response(socket)
+        #response.parse_data()
+        print(response)
+        CURR_REQ+=1
+
     
 # Sending files with the size of MAX_BLOCK_SIZE
 def send_file(socket, file_name):
+    # Grab file size
     file_size = os.path.getsize(file_name)  
 
     # We need to open the file in binary mode 
@@ -113,25 +127,29 @@ def send_file(socket, file_name):
             block = file.read(MAX_BLOCK_SIZE)
             if not block:
                 break 
-            # Send the block
-            socket.sendall(block)
+            try:
+                socket.sendall(block)
+            except Exception:
+                print("Error sending files: \n")
+                return
             bytes_sent += len(block)
             print(f"Sent {bytes_sent}/{file_size} bytes")
 
-    print("File transfer complete.")
+    print("File transfer complete.\n")
 
 #Request for file list OpCode.LISTFILESOP (200)
 #Request for file list OpCode.LISTFILESOP (201)
 
 #Request for file list OpCode.LISTFILESOP (202)
 def request_file_list(user_id,socket):
+    global CURR_REQ
     # Implement the header data
     header = RequestHeader(OpCode.LISTFILESOP,user_id)
     request_header = header.pack_header()
 
     # Log the request 
     formatted_request = logger.format_hex(request_header, group_size=1)
-    print(f"Sending first request:\n{formatted_request}")
+    print(f"Sending request #{CURR_REQ}:\n{formatted_request}")
     message = header.build_message()
     print(f"User ID: {header.getUserID()}")
     print(f"Op Code: {header.getOpCode()}\n")
@@ -141,6 +159,7 @@ def request_file_list(user_id,socket):
     
     # Handle the response
     response = Response(socket)
-    response.parse_data()
+    # response.parse_data()
     print(response)
+    CURR_REQ+=1
     

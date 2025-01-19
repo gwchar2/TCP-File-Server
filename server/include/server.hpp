@@ -6,6 +6,8 @@
 #include "../include/logger.hpp"
 #include "../include/response.hpp"
 #include <boost/asio.hpp>
+#include <boost/system/system_error.hpp>
+#include <boost/asio/error.hpp>
 #include <fstream>
 #include <iostream>
 #include <thread> 

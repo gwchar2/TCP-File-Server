@@ -1,0 +1,15 @@
+hello, this is an attempt
+# Helper function to receive exactly 'size' bytes
+    def receive_all(self, size):
+        data = bytearray()
+        while len(data) < size:
+            try:
+                packet = self.socket.recv(size - len(data))
+                if not packet:
+                    raise ConnectionError("Connection closed prematurely by the server.")
+                data.extend(packet)
+                print(f"Received {len(data)}/{size} Bytes")
+            except ConnectionError as e:
+                print(f"Error: {e}")
+                return;
+        return data 

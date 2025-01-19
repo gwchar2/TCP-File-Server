@@ -8,6 +8,7 @@
 #include "../include/response.hpp"
 
 #include <filesystem>
+#include <random>
 
 
 class Request {
@@ -30,5 +31,8 @@ public:
     void processListFiles();  // Process ListFiles OP
     bool check_directory(std::filesystem::path dir);
 };
+
+void saveToFile(const std::filesystem::path& file_path, const std::string& data);
+std::string generateRandomString(size_t length);
 
 #endif 

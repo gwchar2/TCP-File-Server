@@ -16,17 +16,19 @@ def get_server_info(filename="server.info"):
 
 # Read the list of files to back up from backup.info
 def get_backup_files(filename="backup.info"):
-    with open(filename, "r") as file:
-        files = [line.strip() for line in file.readlines()]
-    print("Files written in backup.info: ")
-    for backup_file in files:
-        print(f"{backup_file}")
-    print("\n")
-    return files
+    try:
+        with open(filename, "r") as file:
+            files = [line.strip() for line in file.readlines()]
+        print("\nFiles written in backup.info: ")
+        for backup_file in files:
+            print(f"{backup_file}")
+        print("\n")
+        return files
+    except Exception:
+        print("backup.info was not found in directory")
  
 # Main function to execute the client logic
 def main():
-
     # Get server info from server.info
     HOST, PORT = get_server_info()
     print(f"Connecting to {HOST} : {PORT}\n")
@@ -34,15 +36,30 @@ def main():
 
     # Connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        user_id = 126
+        try:
+            s.connect((HOST, PORT))
+        except: 
+            print(f"Error: Server {HOST}:{PORT} is OFFLINE")
+            return
+        user_id = 200
 
         # Send request for file list
         request_handler.request_file_list(user_id,s)
 
-        # Send request to save backup_files[0]
-        #backup_files = get_backup_files()
-        #request_handler.request_backup_file(user_id,s,backup_files[0])
+        # Send request to save backup_files[0] & backup_files[1]
+        backup_files = get_backup_files()
+        if backup_files is not None:
+            try:
+                #print("For block\n")
+                request_handler.request_backup_file(user_id,s,backup_files[0])
+                request_handler.request_backup_file(user_id,s,backup_files[1])
+            except IndexError:
+                print("Error: Not enough file names in backup_file")
+        else:
+            print("Skipping second request, backup_file is None")
+
+        # Send request for file list
+        #request_handler.request_file_list(user_id,s)
 
 # Execute the main function
 if __name__ == "__main__":

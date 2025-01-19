@@ -4,6 +4,7 @@
 #include "../include/protocol.hpp" 
 #include "../include/server.hpp"
 #include "../include/communication.hpp"
+#include <filesystem>
 
 class Response {
     
@@ -19,17 +20,17 @@ public:
     const std::vector<unsigned char>& getBuffer() const;
     void setBuffer(const std::string& data);
     void packHeader();
+    void packHeaderWithData(const std::string& data);
     ResponseHeader getHeader();
-    void responseFilesReceived();
-    void responseListReturned();
-    void responseOperationSuccess();
-    void responseFileNotFound();
-    void responseGeneralError();
 };
 
-void responseEmptyDirectory(boost::asio::ip::tcp::socket& sock);
-void responseListReturned(boost::asio::ip::tcp::socket& sock, cons std::string& data);
-
+void responseFileRetrieved(boost::asio::ip::tcp::socket& sock);                        // Response 210
+void responseListReturned(boost::asio::ip::tcp::socket& sock,std::filesystem::path path,std::string file_name);  // Response 211
+void responseOperationSuccess(boost::asio::ip::tcp::socket& sock, const std::string file_name);                      // Response 212
+void responseFileNotFound(boost::asio::ip::tcp::socket& sock , const std::string file_name);                          // Response 1001
+void responseEmptyDirectory(boost::asio::ip::tcp::socket& sock);                        // Response 1002
+void responseGeneralError(boost::asio::ip::tcp::socket& sock);                          // Response 1003
+size_t getFileSize(std::ifstream& inFile);
 
 
 
