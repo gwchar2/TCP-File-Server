@@ -83,6 +83,7 @@ Note: This must be done with 2 seperate terminals, one for the client, and one f
 │   │   ├── response.hpp        # Declarations for response handling
 │   │   ├── logger.hpp          # Declarations for logger
 │   │   └── protocol.hpp        # Declarations for protocol logic
+│   │  
 │   └── /build                  # Build directory (output of compilation)
 │      
 │
