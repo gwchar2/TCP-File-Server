@@ -3,6 +3,7 @@ import os
 import request_handler
 import struct
 import random
+import logging
 from request_handler import RequestHeader
 from response import Response
 
@@ -41,7 +42,6 @@ def main():
         except: 
             print(f"Error: Server {HOST}:{PORT} is OFFLINE")
             return
-        user_id = 200
 
         # Send request for file list
         request_handler.request_file_list(user_id,s)
@@ -50,16 +50,26 @@ def main():
         backup_files = get_backup_files()
         if backup_files is not None:
             try:
-                #print("For block\n")
                 request_handler.request_backup_file(user_id,s,backup_files[0])
                 request_handler.request_backup_file(user_id,s,backup_files[1])
             except IndexError:
-                print("Error: Not enough file names in backup_file")
+                print("Error: Not enough file names in backup_file\n")
+                
         else:
-            print("Skipping second request, backup_file is None")
+            print("Skipping second request, backup_file is None\n")
 
         # Send request for file list
-        #request_handler.request_file_list(user_id,s)
+        request_handler.request_file_list(user_id,s)
+        if backup_files is not None:
+            try:        
+                # Send request for backup_files[0] from server
+                request_handler.request_file(user_id,s,backup_files[0])
+                # Request to delete backup_files[0]
+                request_handler.delete_from_server(user_id,s,backup_files[0])
+                # Send request for backup_files[0] from server
+                request_handler.request_file(user_id,s,backup_files[0])
+            except IndexError:
+                print("Error: Not enough file names in backup_file\n")
 
 # Execute the main function
 if __name__ == "__main__":

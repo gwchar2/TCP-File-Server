@@ -75,37 +75,29 @@ Note: This must be done with 2 seperate terminals, one for the client, and one f
 │   │   ├── main.cpp            # Main entry point of the server
 │   │   ├── server.cpp          # Server logic
 │   │   ├── request.cpp         # Handles requests (e.g., save, retrieve, delete)
-│   │   ├── communication.cpp   # Handles networking (e.g., TCP communication)
 │   │   ├── logger.cpp          # Log handling (e.g., prints to terminal)
 │   │   └── protocol.cpp        # Protocol logic (e.g., binary protocol parsing)
 │   ├── /include                # C++ header files
-│   │   ├── server.h            # Declarations for server
-│   │   ├── request.h           # Declarations for request handling
-│   │   ├── communication.h     # Declarations for communication
-│   │   ├── logger.h            # Declarations for logger
-│   │   └── protocol.h          # Declarations for protocol logic
-│   ├── /build                  # Build directory (output of compilation)
-│   │   └── CMakeLists.txt      # CMake configuration for building the server
-│   ├── /assets                 # Optional: store sample files or configuration files
-│   │   └── sample_files/       # Sample files for testing or examples
-│   └── /tests                  # C++ test cases for unit tests (optional)
-│       ├── test_server.cpp     # Tests for the server logic
-│       └── test_communication.cpp # Tests for communication logic
+│   │   ├── server.hpp          # Declarations for server
+│   │   ├── request.hpp         # Declarations for request handling
+│   │   ├── response.hpp        # Declarations for response handling
+│   │   ├── logger.hpp          # Declarations for logger
+│   │   └── protocol.hpp        # Declarations for protocol logic
+│   └── /build                  # Build directory (output of compilation)
+│      
 │
 ├── /client                     # Python client-side code
 │   ├── /src                    # Python source files
-│   │   ├── client.py           # Python client entry point
-│   │   └── client_helpers.py   # Helper functions for client communication
-│   ├── /tests                  # Python test cases (optional)
-│   │   ├── test_client.py      # Tests for client-side logic
-│   └── /assets                 # Optional: assets for testing or configuration
+│       ├── server.info         # Holds the IP:PORT for connection
+│       ├── backup.info         # Includes the file names for backup
+│       ├── client.py           # Python client entry point
+│       ├── request_handler.py  # Handles the requests sent to server
+│       ├── response.py         # Handles the responses received from server
+│       └── logger.py           # Logs the information received in hexa...   
 │
 ├── /docs                       # Documentation (optional)
 │   └── project_overview.md     # Overview of the project, protocol, etc.
 │
-├── /scripts                    # Miscellaneous scripts (e.g., build scripts)
-│   ├── build.sh                # Build script (if applicable for server)
-│   └── run_tests.sh            # Run tests script (if needed for both C++ and Python)
-│
+├── makefile.txt                # Builds the server
 └── README.md                   # Project description and instructions
 ```

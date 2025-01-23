@@ -12,9 +12,16 @@
 #include <iostream>
 #include <thread> 
 #include <string>
+#include <iomanip>
+#include <ctime>
+#include <sstream>
+#include <cstdint>
+#include <vector>
+#include <filesystem>
+#include <random>
 
 
-#define DIRECTORY "server/backupsvr"
+#define DIRECTORY "server/backupsvr"                                                        // Server backup directory
 
 using boost::asio::ip::tcp;
 
@@ -25,12 +32,12 @@ public:
     void start();
 
 private:
-    // Function to handle communication with a client
-    void handle_client(tcp::socket sock);
-    void logger(const std::vector<unsigned char>& data, const std::string& direction);
+    
+    void handle_client(tcp::socket sock);                                                   // Handles communication with client
+    void logger(const std::vector<unsigned char>& data, const std::string& direction);      // Logs on client
 
-    boost::asio::io_context io_context;
-    tcp::acceptor acceptor;
+    boost::asio::io_context io_context;                                                     // io context
+    tcp::acceptor acceptor;                                                                 // boost tcp acceptor
 };
 
 #endif

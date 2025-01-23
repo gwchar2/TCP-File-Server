@@ -6,7 +6,7 @@ from enum import Enum
 from response import Response
 from response import Status
 
-CURR_REQ = 1
+# Max block size for sent packets
 MAX_BLOCK_SIZE = 2048
 
 class OpCode(Enum):
@@ -30,11 +30,12 @@ class RequestHeader:
     def setName(self, file_name):
         self.file_name = file_name
         self.name_len = len(self.file_name)
-        try:
-            self.file_size = os.path.getsize(self.file_name)
-        except Exception:
-            print(f"Error: The file '{self.file_name}' was not found.")
-            self.file_size = 0 
+        if self.op is OpCode.BACKUPFILEOP:
+            try:
+                self.file_size = os.path.getsize(self.file_name)
+            except Exception:
+                print(f"Error: The file '{self.file_name}' was not found.")
+                self.file_size = 0 
 
     def getNameLen(self):
         return self.name_len
@@ -54,6 +55,7 @@ class RequestHeader:
     def getFileName(self):
         return self.file_name.encode('utf-8') if self.file_name else None
 
+    # Packs the header according to the Op Code
     def pack_header(self):
         if self.op == OpCode.BACKUPFILEOP:
             return struct.pack('<I B B H I', self.user_id, self.version, self.op.value, self.name_len, self.file_size)
@@ -81,11 +83,10 @@ class RequestHeader:
             return header  # For LISTFILESOP, no file name
 
 
-#Request for file backup on server OpCode.BACKUPFILEOP (100)
+# Request for file backup on server OpCode.BACKUPFILEOP (100)
 def request_backup_file(user_id, socket, file):
-    global CURR_REQ
     if not os.path.exists(file):
-        print(f"Error: The file {file} does not exist.")
+        print(f"Error: The file '{file}' does not exist.\n")
         return
     else:
         # Implement the header data
@@ -97,8 +98,9 @@ def request_backup_file(user_id, socket, file):
 
         # Log the request 
         formatted_request = logger.format_hex(request_header, group_size=1)
-        print(f"Sending request #{CURR_REQ}:\n{formatted_request}")
         message = header.build_message()
+        print("Sending file for backup")
+        print(formatted_request)
         print(f"User ID: {header.getUserID()}")
         print(f"Op Code: {header.getOpCode()}")
         print(f"File Name: {header.getFileName().decode('utf-8')}")
@@ -106,14 +108,10 @@ def request_backup_file(user_id, socket, file):
 
         socket.sendall(message)
 
-        # Return the message to be sent
         send_file(socket,header.getFileName())
         response = Response(socket)
-        #response.parse_data()
         print(response)
-        CURR_REQ+=1
-
-    
+ 
 # Sending files with the size of MAX_BLOCK_SIZE
 def send_file(socket, file_name):
     # Grab file size
@@ -137,20 +135,65 @@ def send_file(socket, file_name):
 
     print("File transfer complete.\n")
 
-#Request for file list OpCode.LISTFILESOP (200)
-#Request for file list OpCode.LISTFILESOP (201)
+#Request for file list OpCode.RETRIEVEFILEOP (200)
+def request_file(user_id,socket, file_name):
+    # Implement the header data
+    header = RequestHeader(OpCode.RETRIEVEFILEOP, user_id)
+    header.setName(file_name)
+    request_header = header.pack_header()
+
+    # Log the request 
+    formatted_request = logger.format_hex(request_header, group_size=1)
+    message = header.build_message()
+    print("Requesting File")
+    print(formatted_request)
+    print(f"User ID: {header.getUserID()}")
+    print(f"Op Code: {header.getOpCode()}")
+    print(f"File Name: {header.getFileName().decode('utf-8')}")
+    print(f"File Size: {header.getFileSize()}\n")
+    
+    # Send the request
+    socket.sendall(message)
+    
+    # Wait for response
+    response = Response(socket)
+    print(response)
+
+#Request for file list OpCode.DELETEFILEOP (201)
+def delete_from_server(user_id,socket,file_name):
+    # Implement the header data
+    header = RequestHeader(OpCode.DELETEFILEOP, user_id)
+    header.setName(file_name)
+    request_header = header.pack_header()
+
+    # Log the request 
+    formatted_request = logger.format_hex(request_header, group_size=1)
+    message = header.build_message()
+    print("Requesting deletion of file")
+    print(formatted_request)
+    print(f"User ID: {header.getUserID()}")
+    print(f"Op Code: {header.getOpCode()}")
+    print(f"File Name: {header.getFileName().decode('utf-8')}")
+    print(f"File Size: {header.getFileSize()}\n")
+
+    # Send the request
+    socket.sendall(message)
+    
+    # Wait for response
+    response = Response(socket)
+    print(response)
 
 #Request for file list OpCode.LISTFILESOP (202)
 def request_file_list(user_id,socket):
-    global CURR_REQ
     # Implement the header data
     header = RequestHeader(OpCode.LISTFILESOP,user_id)
     request_header = header.pack_header()
 
     # Log the request 
     formatted_request = logger.format_hex(request_header, group_size=1)
-    print(f"Sending request #{CURR_REQ}:\n{formatted_request}")
     message = header.build_message()
+    print("Requesting File List")
+    print(formatted_request)
     print(f"User ID: {header.getUserID()}")
     print(f"Op Code: {header.getOpCode()}\n")
 
@@ -159,7 +202,5 @@ def request_file_list(user_id,socket):
     
     # Handle the response
     response = Response(socket)
-    # response.parse_data()
     print(response)
-    CURR_REQ+=1
     

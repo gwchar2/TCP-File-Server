@@ -1,4 +1,3 @@
-
 # Makefile for C++ Server only
 
 # Compiler settings
@@ -13,12 +12,8 @@ BUILD_DIR = server/build
 SERVER_SRC = $(SRC_DIR)/main.cpp \
              $(SRC_DIR)/server.cpp \
 			 $(SRC_DIR)/request.cpp \
-             $(SRC_DIR)/communication.cpp \
 			 $(SRC_DIR)/logger.cpp \
              $(SRC_DIR)/response.cpp 
-             # add the files when I need them: \
-             $(SRC_DIR)/file_manager.cpp \
-             $(SRC_DIR)/protocol.cpp
 
 # Server object files
 SERVER_OBJ =  $(SERVER_SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
@@ -52,5 +47,3 @@ rebuild: clean all
 run: $(SERVER_EXEC)
 	./$(SERVER_EXEC)
 
-# Phony targets
-.PHONY: all clean rebuild run

@@ -1,5 +1,6 @@
 import struct
 import logger
+import os
 from enum import Enum
 
 class Status(Enum):
@@ -90,6 +91,7 @@ class Response:
                     print(f"Error: {e}")
                     return;
             self.data = data 
+
     def get_data(self):
         return self.data
 
@@ -102,13 +104,15 @@ class Response:
     def get_name(self):
         return self.name
 
+    # Prints the self.data field
     def print_data(self):
         try:
             decoded_data = self.get_data().decode('utf-8') if self.get_data() is not None else "No data"
             return decoded_data
         except UnicodeDecodeError:
             return f"Raw data (hex): {self.get_data().hex()}"
-
+    
+    # Prints the self.file_name field
     def print_name(self):
         try:
             decoded_data = self.get_name().decode('utf-8') if self.get_name() is not None else "No Name"
@@ -116,6 +120,7 @@ class Response:
         except UnicodeDecodeError:
             return f"Raw data (hex): {self.get_name().hex()}"
 
+    # Custom call method
     def __str__(self):
         # Parse the header
         self.parse_header()
@@ -132,12 +137,44 @@ class Response:
         # Parse the data related fields
         self.parse_data()
         data_received = self.print_data()
+        if self.status is Status.FILES_RETREIVED:
+            # File name is unique_name (retreived file with incremented (1) if already exists),
+            # unclear if should be tmp or not...
+            # We also need it to be the same type, so it is best to keep the name with the same extension
+            unique_name = unique_file_name(file_name)
+            # Write to the file as long as there is data to be written
+            with open(unique_name,'w',newline='\n') as file:
+                file.write(data_received)
+
+            # Print a different message.
+            return (f"{header}\n"
+                f"Status: {status_str}\n"
+                f"Name Length: {self.name_len} Bytes\n"
+                f"File Name: {file_name}\n"
+                f"Data Size: {self.data_size} Bytes\n"
+                f"Data Written to file {unique_name}\n")
 
         # Construct the full response string and return it
         return (f"{header}\n"
                 f"Status: {status_str}\n"
-                f"Name Length: {self.name_len}\n"
+                f"Name Length: {self.name_len} Bytes\n"
                 f"File Name: {file_name}\n"
-                f"Data Size: {self.data_size}\n"
+                f"Data Size: {self.data_size} Bytes\n"
                 f"Data Received:\n{data_received}\n")
-            
+
+# Creates a unique file name if a certain file already exists (instead of overriding)
+def unique_file_name(file_name):
+    #We check if the file name already exists in directory
+    if os.path.exists(file_name):
+        # We need to make a unique name, with (1)..(2)...whatever...incremented to it
+        # We split the name to base name - extension
+        base_name, ext = os.path.splitext(file_name)
+
+        # We check for 1+ until we find a unique name
+        i = 1
+        unique_name = f"{base_name}({i}){ext}"
+        while os.path.exists(unique_name):
+            i += 1
+            unique_name = f"{base_name}({i}){ext}"
+        return unique_name
+    return file_name

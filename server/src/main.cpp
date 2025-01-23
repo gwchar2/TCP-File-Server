@@ -1,11 +1,12 @@
 #include "../include/server.hpp"
 
 int main() {
-    int port = 8080;  // Port number
+    /* Server listens to port 8080 */
+    int port = 8080;    
 
-    // Create the server object and start it
+    /* Creates and starts new server */
     Server server(port);
-    server.start();  // Start the server
+    server.start(); 
 
     return 0;
 }

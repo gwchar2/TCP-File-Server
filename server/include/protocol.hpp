@@ -1,20 +1,20 @@
 #ifndef PROTOCOL_HPP
 #define PROTOCOL_HPP
 
+
 #include <cstdint>
 #include <iostream>
 #include <vector>
 #include <string>
 
-
 #define MAX_BUFFER 2048
 
 /* OpCode definitions */
 enum class OpCode : uint8_t {
-    BACKUP_FILE_OP = 100,           // all header fields are full
-    RETRIEVE_FILE_OP = 200,         // size,payload fields do not exist.
-    DELETE_FILE_OP = 201,           // size,payload files do not exist.
-    LIST_FILES_OP = 202             // size,payload,filename,namelen do not exist.
+    BACKUP_FILE_OP = 100,                           // all header fields are full
+    RETRIEVE_FILE_OP = 200,                         // size,payload fields do not exist.
+    DELETE_FILE_OP = 201,                           // size,payload files do not exist.
+    LIST_FILES_OP = 202                             // size,payload,filename,namelen do not exist.
 };
 
 /* Response status definitions */
