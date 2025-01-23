@@ -1,4 +1,4 @@
-# Maman14 Project
+# File Backup Server (TCP)
 
 This repository contains the implementation of a server-client system. The server is written in C++ and the client in Python. Below is an overview of the project structure and its components.
 
