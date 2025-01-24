@@ -10,34 +10,25 @@ This repository contains the implementation of a server-client system. The serve
 - **Source files**: Implements the core server functionality:
   - `main.cpp`: Entry point of the server.
   - `server.cpp`: Contains the main server logic.
-  - `request_handler.cpp`: Handles various client requests like save, retrieve, and delete.
-  - `communication.cpp`: Manages networking and TCP communication.
-  - `file_manager.cpp`: Handles file I/O operations for persistent storage.
-  - `protocol.cpp`: Implements the binary protocol used for communication.
+  - `request.cpp`: Handles various client requests like save, retrieve, and delete.
+  - `response.cpp`: Handles various responses from the server to a client.
+  - `logger.cpp`: Handles preety printing requests and responses.
 
 - **Headers**: Contains declarations corresponding to the source files.
-
-- **Tests**: Optional test cases located in `/server/tests`.
-
+  - `protocol.hpp`: Contains declerations for main server protocol settings.
+  - `server.hpp`: Contains declarations for socket related functions.
+  - `request.hpp`: Contains declarations for the Request class.
+  - `response.hpp`: Contains declarations for the Response class.
+  - `logger.hpp`: Contains declarations for preety printing functions.
+  -
 - **Build Configuration**: The `makefile.txt` file provides configuration for building the server.
 
 ### **Client (Python)**
 - **Source files**: Implements the client-side logic:
-  - `client.py`: Entry point for the client application.
-  - `client_helpers.py`: Contains helper functions for communication with the server.
-
-- **Tests**: Optional test cases located in `/client/tests`.
-
-- **Assets**: Contains any optional assets needed for testing or configuration.
-
-### **Documentation**
-- All project documentation is in the `/docs` directory.
-- Includes files like `project_overview.md` for detailed explanations of the project structure, communication protocol, etc.
-
-### **Scripts**
-- The `/scripts` directory contains utility scripts:
-  - `build.sh`: Builds the server using the configuration in `/server/build`.
-  - `run_tests.sh`: Runs all tests for both the server and client.
+  - `client.py`: Main logic of client to server communication.
+  - `request_handler.py`: Contains the implementations for Request class.
+  - `response.py`: Contains the implementations for Response class.
+  - `logger.py`: Contains a function for preety printing.
 
 ---
 
@@ -55,11 +46,12 @@ Note: This must be done with 2 seperate terminals, one for the client, and one f
     ```bash
     ./server
     ```
-4. Navigate to the client directory
+### **Client**
+1. Navigate to the client directory
    ```bash
    cd client/src
    ```
-5. Run the client
+2. Run the client
     ```bash
     python client.py
     ```

@@ -43,11 +43,13 @@ def main():
             print(f"Error: Server {HOST}:{PORT} is OFFLINE")
             return
 
+    
+        # Send request to save backup_files[0] & backup_files[1]
+        backup_files = get_backup_files()
+        
         # Send request for file list
         request_handler.request_file_list(user_id,s)
 
-        # Send request to save backup_files[0] & backup_files[1]
-        backup_files = get_backup_files()
         if backup_files is not None:
             try:
                 request_handler.request_backup_file(user_id,s,backup_files[0])
